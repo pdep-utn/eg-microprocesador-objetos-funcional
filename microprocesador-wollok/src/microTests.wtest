@@ -1,0 +1,132 @@
+import microprocesador.*
+import instrucciones.*
+
+describe "Un programa formado por" {
+	const micro = new Microprocesador()
+	
+	method assertMicro(a, b, pc) {
+		assert.equals(a, micro.a())
+		assert.equals(b, micro.b())
+		assert.equals(pc, micro.pc())	
+	}
+	
+	method programa(instrucciones...) = new Programa(instrucciones)
+	
+	test "NOP: No hace nada" {		
+		self
+		.programa(
+			nop
+		)
+		.ejecutar(micro)
+		
+		self.assertMicro(0, 0, 1)
+	}
+	
+	test "LODV: guarda en el registro A" {		
+		self
+		.programa(
+			new Lodv(5)
+		)
+		.ejecutar(micro)
+		
+		self.assertMicro(5, 0, 2)
+	}
+	
+	test "SWAP: invierte los registros" {		
+		self
+		.programa(
+			new Lodv(5),
+			swap,
+			new Lodv(2)
+		)
+		.ejecutar(micro)
+		
+		self.assertMicro(2, 5, 5)
+	}
+	
+	test "ADD: suma los registros" {		
+		self
+		.programa(
+			new Lodv(5),
+			swap,
+			new Lodv(2),
+			add
+		)
+		.ejecutar(micro)
+		
+		self.assertMicro(7, 5, 6)
+	}
+	
+	test "DIV: por 0 explota" {		
+		const div0 = { 
+			self
+			.programa(
+				new Lodv(5),
+				div,
+				new Lodv(2)
+			)
+			.ejecutar(micro)
+		}
+		
+		assert.throwsException(div0)
+	}
+	
+	test "HALT: detiene la ejecución" {		
+		self
+		.programa(
+			new Lodv(5),
+			halt,
+			new Lodv(2)
+		)
+		.ejecutar(micro)
+		
+		self.assertMicro(5, 0, 3)
+	}
+	
+	test "IFNZ: que cumple ejecuta instrucciones" {		
+		self
+		.programa(
+			new Lodv(5),
+			new Ifnz(
+				swap,
+				new Lodv(2)
+			),
+			nop
+		)
+		.ejecutar(micro)
+		
+		self.assertMicro(2, 5, 7)
+	}
+	
+	test "IFNZ: que NO cumple NO ejecuta instrucciones" {		
+		self
+		.programa(
+			new Lodv(5),
+			swap,
+			new Ifnz(
+				swap,
+				new Lodv(2)
+			),
+			nop
+		)
+		.ejecutar(micro)
+		
+		self.assertMicro(0, 5, 5)
+	}
+	
+	test "IFNZ: que cumple y ejecuta HALT corta la ejecución" {		
+		self
+		.programa(
+			new Lodv(5),
+			new Ifnz(
+				swap,
+				halt,
+				new Lodv(2)
+			),
+			new Lodv(3)
+		)
+		.ejecutar(micro)
+		
+		self.assertMicro(0, 5, 5)
+	}
+}
