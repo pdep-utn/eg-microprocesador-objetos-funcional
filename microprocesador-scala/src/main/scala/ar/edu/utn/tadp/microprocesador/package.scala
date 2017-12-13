@@ -33,7 +33,7 @@ package object instrucciones {
     instrucciones.foreach(ejecutarInstruccion(micro, _))
   }
 
-  def ejecutar(micro: Microprocesador, programa: Instruccion*) = {
+  def ejecutar(micro: Microprocesador, programa: Instruccion*) : Unit = {
     try
       ejecutarInstrucciones(micro, programa)
     catch {

@@ -7,8 +7,7 @@ data Micro = Micro {
   stop :: Bool
 } deriving (Show, Eq)
 
-micro = Micro 0 0 0 False
-
+movePC :: Micro -> Micro
 movePC micro = micro{ pc = pc micro + 1 }
 
 isZeroA = (==0) . a
@@ -31,7 +30,7 @@ mul :: Instruccion
 mul (Micro a b pc stop) = Micro (a*b) b pc stop
 
 divv :: Instruccion          -- Fuckin Lazy Evaluation
-divv micro@(Micro a b pc stop) = (Micro $! (div a b)) b pc stop
+divv (Micro a b pc stop) = (Micro $! (div a b)) b pc stop
 
 swap :: Instruccion
 swap (Micro a b pc stop) = Micro b a pc stop

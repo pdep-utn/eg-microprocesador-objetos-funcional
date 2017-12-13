@@ -2,6 +2,8 @@ import Test.Hspec
 import Control.Exception (evaluate)
 import Microprocesador
 
+micro = Micro 0 0 0 False
+
 main = hspec $ do
   describe "Un programa formado por" $ do
     it "NOP: No hace nada" $ do

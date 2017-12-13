@@ -71,6 +71,7 @@ class Programa {
 			instrucciones.forEach{i => i.ejecutar(micro)}
 		} catch e : HaltException {
 			/* HALT es una forma correcta de terminar un programa */
+			// ESTO ES UN CASO SUPER EXCEPCIONAL
 		}
 	}
 }
